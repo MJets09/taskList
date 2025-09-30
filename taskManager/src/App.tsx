@@ -1,13 +1,16 @@
 import "./App.css";
 import { useState } from "react";
+import TaskList from "./TaskList";
+import Digimon from "./Digimon";
+import AddTask from "./AddTask";
 
-interface Task {
+export interface Task {
   id: number;
   text: string;
   completed: boolean;
 }
 
-interface Digimon {
+export interface DigimonAttributes {
   id: number;
   name: string;
   type: string;
@@ -21,7 +24,7 @@ const starterMon = [{ id: 0, name: "WarGreymon", type: "Vaccine" }];
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
-  const [digiMon, setdigiMon] = useState<Digimon[]>(starterMon);
+  const [digiMon, setdigiMon] = useState<DigimonAttributes[]>(starterMon);
   const [newTask, setNewTask] = useState<string>("");
   const [newMon, setNewMon] = useState<string>("");
   const [newType, setNewType] = useState<string>("");
@@ -52,53 +55,41 @@ function App() {
     setNewType("");
   };
 
+  const deleteTask = (id: number) => {
+    const newTasks = tasks.filter((tasks) => tasks.id !== id);
+    setTasks(newTasks);
+  };
+
+  const toggleTask = (id: number) => {
+    setTasks(
+      tasks.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t))
+    );
+  };
+
+  const deleteMon = (id: number) => {
+    const deleteMon = digiMon.filter((digi) => digi.id !== id);
+    setdigiMon(deleteMon);
+  };
+
   return (
     <>
       <h1>Task Manager</h1>
       <div id="taskList">
         <h2>Tasks</h2>
-        <ul>
-          {tasks.map((task) => (
-            <li key={task.id}>
-              {task.text}{" "}
-              <input
-                type="checkbox"
-                checked={task.completed}
-                onChange={() => {
-                  setTasks(
-                    tasks.map((t) =>
-                      t.id === task.id ? { ...t, completed: !t.completed } : t
-                    )
-                  );
-                }}
-              />
-              <span
-                className={task.completed ? "completed-task" : "task-text"}
-              ></span>
-            </li>
-          ))}
-        </ul>
-        <form onSubmit={handleAddTask}>
-          <input
-            type="text"
-            placeholder="Add a task"
-            value={newTask}
-            onChange={(e) => setNewTask(e.target.value)}
-          />
-          <button>Submit</button>
-        </form>
+        <TaskList
+          tasks={tasks}
+          onToggleTask={toggleTask}
+          onDeleteTask={deleteTask}
+        />
+        <AddTask
+          currentValue={newTask}
+          handleAddTask={handleAddTask}
+          updateValue={setNewTask}
+        ></AddTask>
       </div>
 
       <div id="digimon">
-        <ul>
-          {digiMon.map((mon) => (
-            <li key={mon.id}>
-              <p>
-                Your digimon is {mon.name} and it's a {mon.type} type!
-              </p>
-            </li>
-          ))}
-        </ul>
+        <Digimon Digimon={digiMon} deleteMon={deleteMon}></Digimon>
 
         <form onSubmit={handleNewMon}>
           <input
