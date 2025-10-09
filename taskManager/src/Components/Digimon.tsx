@@ -1,4 +1,4 @@
-import type { DigimonAttributes } from "./App";
+import type { DigimonAttributes } from "../App";
 
 interface DigiMonProps {
     Digimon: DigimonAttributes[],

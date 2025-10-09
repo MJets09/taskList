@@ -1,8 +1,9 @@
 import "./App.css";
 import { useState } from "react";
-import TaskList from "./TaskList";
-import Digimon from "./Digimon";
-import AddTask from "./AddTask";
+import TaskList from "./Components/TaskList";
+import Digimon from "./Components/Digimon";
+import AddTask from "./Components/AddTask";
+import AddDigimon from "./Components/addDigimon";
 
 export interface Task {
   id: number;
@@ -73,8 +74,8 @@ function App() {
 
   return (
     <>
-      <h1>Task Manager</h1>
-      <div id="taskList">
+      <h1 className="text-red-500">Task Manager</h1>
+      <div id="taskList" className="max-w-2xl mx-auto p-6 space-y-20 bg-red-200">
         <h2>Tasks</h2>
         <TaskList
           tasks={tasks}
@@ -88,24 +89,15 @@ function App() {
         ></AddTask>
       </div>
 
-      <div id="digimon">
+      <div className="digimon-container">
         <Digimon Digimon={digiMon} deleteMon={deleteMon}></Digimon>
-
-        <form onSubmit={handleNewMon}>
-          <input
-            type="text"
-            placeholder="What is your digimon?"
-            value={newMon}
-            onChange={(e) => setNewMon(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="What is your digimon's type?"
-            value={newType}
-            onChange={(e) => setNewType(e.target.value)}
-          />
-          <button>Submit</button>
-        </form>
+        <AddDigimon 
+          onFormSubmit={handleNewMon} 
+          digimonName={newMon}
+          onNameChange={setNewMon} 
+          digimonType={newType}
+          onTypeChange={setNewType} 
+        />
       </div>
     </>
   );
