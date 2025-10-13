@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TaskList from "./Components/TaskList";
 import Digimon from "./Components/Digimon";
 import AddTask from "./Components/AddTask";
@@ -29,6 +29,29 @@ function App() {
   const [newTask, setNewTask] = useState<string>("");
   const [newMon, setNewMon] = useState<string>("");
   const [newType, setNewType] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  localStorage.setItem("example", JSON.stringify(['Goku', 'Vegeta']))
+
+  useEffect(() => {
+    const savedTasks = localStorage.getItem("mySavedTasks");
+    console.log("Loading from localStorage:", savedTasks);
+
+    if (savedTasks) {
+      setTasks(JSON.parse(savedTasks));
+    } else {
+      setTasks([]);
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      console.log("Saving to localStorage:", tasks);
+      localStorage.setItem("mySavedTasks", JSON.stringify(tasks));
+    }
+  }, [tasks, loading]);
 
   const handleAddTask = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -72,10 +95,22 @@ function App() {
     setdigiMon(deleteMon);
   };
 
+  let vegito = JSON.parse(localStorage.getItem("example") || '[]');
+
   return (
     <>
+    <h1>{vegito}</h1>
+      {loading && (
+        <div className="loading-bar">
+          <p>Loading tasks...</p>
+          {/* Or a fancy spinner/bar */}
+        </div>
+      )}
       <h1 className="text-red-500">Task Manager</h1>
-      <div id="taskList" className="max-w-2xl mx-auto p-6 space-y-20 bg-red-200">
+      <div
+        id="taskList"
+        className="max-w-2xl mx-auto p-6 space-y-20 bg-red-200"
+      >
         <h2>Tasks</h2>
         <TaskList
           tasks={tasks}
@@ -91,12 +126,12 @@ function App() {
 
       <div className="digimon-container">
         <Digimon Digimon={digiMon} deleteMon={deleteMon}></Digimon>
-        <AddDigimon 
-          onFormSubmit={handleNewMon} 
+        <AddDigimon
+          onFormSubmit={handleNewMon}
           digimonName={newMon}
-          onNameChange={setNewMon} 
+          onNameChange={setNewMon}
           digimonType={newType}
-          onTypeChange={setNewType} 
+          onTypeChange={setNewType}
         />
       </div>
     </>
